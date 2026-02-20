@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANDA - Panduan Perawatan di Rumah</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="font-sans text-slate-800 bg-slate-100 min-h-screen">
+
+    <!-- AUDIO -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-panda" class="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl relative pb-20">
+            
+        <!-- Navbar App -->
+        <header class="sticky top-0 z-40">
+            <nav class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md rounded-b-3xl shadow-sm mb-6">
+                <div class="flex items-center gap-2">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTKZefh1upjGi-iHYUDbt0Ui5Ho7_ADfPBteQ&s" alt="Logo RSBM" class="h-10">
+                    <img src="assets/unej_logo.png" alt="Logo UNEJ" class="h-10"> <!-- UNEJ Logo Added -->
+                </div>
+                <div class="text-right">
+                    <h1 class="text-lg font-extrabold text-blue-900 leading-none">PANDA</h1>
+                    <p class="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Panduan Perawatan di Rumah</p>
+                </div>
+            </nav>
+        </header>
+
+        <main class="px-4 relative z-0">
+            
+            <!-- PAGE 1: INPUT DATA -->
+            <section id="page-1" class="page-active glass-card rounded-[2.5rem] p-8 text-center">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Halo, Mari Belajar</h2>
+                <p class="text-xs text-slate-500 mb-6">Silakan lengkapi data diri Anda sebelum memulai.</p>
+                
+                <div class="space-y-4 text-left">
+                    <input type="text" id="inputNama" placeholder="Nama Lengkap Pasien" class="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500 transition shadow-sm">
+                    
+                    <select id="inputGender" class="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none shadow-sm">
+                        <option value="">Pilih Jenis Kelamin</option>
+                        <option>Laki-laki</option>
+                        <option>Perempuan</option>
+                    </select>
+                    
+                    <select id="inputRuang" class="w-full p-4 bg-white border border-slate-200 rounded-2xl outline-none shadow-sm">
+                        <option value="">Pilih Ruang Perawatan</option>
+                        <option>Cempaka</option>
+                        <option>Jepun</option>
+                        <option>Sandat</option>
+                        <option>Merak</option>
+                        <option>Kasuari</option>
+                    </select>
+                    
+                    <button onclick="startApp()" class="w-full btn-grad text-white font-bold py-4 rounded-2xl mt-4 shadow-lg uppercase tracking-wider hover:opacity-90 transition">
+                        Masuk Panduan
+                    </button>
+                </div>
+            </section>
+
+            <!-- PAGE 2: PILIH PENYAKIT -->
+            <section id="page-2" class="hidden glass-card rounded-[2.5rem] p-8">
+                <h2 class="text-xl font-bold text-blue-900 mb-6 text-center">Pilih Kondisi Kesehatan</h2>
+                <div id="grid-diagnosa" class="grid grid-cols-2 gap-3">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <!-- PAGE 3: SUB MATERI -->
+            <section id="page-3" class="hidden glass-card rounded-[2.5rem] p-8 text-center">
+                <h2 id="judulDiagnosa" class="text-xl font-black text-blue-800 mb-6 uppercase tracking-tighter leading-tight"></h2>
+                <div id="listSubMateri" class="space-y-3"></div>
+                <button onclick="goPage(2)" class="mt-8 text-sm text-slate-400 font-bold hover:text-blue-600 transition">
+                    <i class="fa-solid fa-chevron-left mr-2"></i> Kembali
+                </button>
+            </section>
+
+            <!-- PAGE 4: KUIS & MATERI -->
+            <section id="page-4" class="hidden glass-card rounded-[2.5rem] overflow-hidden">
+                <!-- PRE/POST TEST AREA -->
+                <article id="kuis-area" class="p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <span id="labelTipeKuis" class="px-3 py-1 bg-blue-100 text-blue-600 text-[10px] font-black rounded-full uppercase">Pre-Test</span>
+                        <span id="progresSoal" class="text-xs font-bold text-slate-400">1 / 5</span>
+                    </div>
+                    <h3 id="teksSoal" class="text-lg font-bold text-slate-800 mb-6 leading-relaxed"></h3>
+                    <div id="opsiKuis" class="space-y-3"></div>
+                </article>
+
+                <!-- MATERI CONTENT AREA -->
+                <article id="materi-area" class="hidden">
+                    <div id="videoContainer" class="bg-black aspect-video flex items-center justify-center relative">
+                        <!-- Video iframe/element goes here -->
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 mb-6">
+                            <p class="text-[10px] font-bold text-blue-600 mb-3 uppercase tracking-widest text-center">
+                                <i class="fa-solid fa-headphones mr-1"></i> Pilih Bahasa Audio:
+                            </p>
+                            <div class="grid grid-cols-2 gap-2 text-[9px] font-bold">
+                                <button onclick="playAudio('indo')" class="bg-white p-2.5 rounded-xl border hover:bg-blue-600 hover:text-white transition shadow-sm">INDONESIA</button>
+                                <button onclick="playAudio('jawa')" class="bg-white p-2.5 rounded-xl border hover:bg-blue-600 hover:text-white transition shadow-sm">JAWA</button>
+                                <button onclick="playAudio('bali')" class="bg-white p-2.5 rounded-xl border hover:bg-blue-600 hover:text-white transition shadow-sm">BALI</button>
+                                <button onclick="playAudio('inggris')" class="bg-white p-2.5 rounded-xl border hover:bg-blue-600 hover:text-white transition shadow-sm">INGGRIS</button>
+                                <button onclick="playAudio('jepang')" class="bg-white p-2.5 rounded-xl border hover:bg-blue-600 hover:text-white transition col-span-2 shadow-sm">JEPANG</button>
+                            </div>
+                            <audio id="audioMateri" controls class="w-full mt-4 h-8 opacity-80"></audio>
+                        </div>
+
+                        <div class="bg-white/60 backdrop-blur-sm p-5 rounded-2xl border border-slate-100 shadow-sm mb-6">
+                            <h3 id="judulMateri" class="text-lg font-bold text-blue-900 mb-3 uppercase leading-tight"></h3>
+                            <p id="isiTeksMateri" class="text-xs text-slate-600 leading-relaxed whitespace-pre-line text-justify"></p>
+                        </div>
+                        
+                        <button onclick="startPostTest()" class="w-full btn-grad text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition transform hover:-translate-y-1">
+                            Lanjut Ujian Akhir <i class="fa-solid fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </article>
+            </section>
+
+            <!-- PAGE 5: SELESAI & KEPUASAN -->
+            <section id="page-5" class="hidden glass-card rounded-[2.5rem] p-8 text-center">
+                <h2 class="text-2xl font-bold text-blue-900 mb-2">Terima Kasih! 😍</h2>
+                <p class="text-xs text-slate-500 mb-8">Bagaimana pengalaman Anda menggunakan aplikasi ini?</p>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div onclick="finish('Sangat Puas')" class="emoji-card p-4 bg-white rounded-3xl shadow-sm"><span class="text-4xl block mb-2">😍</span><p class="text-[10px] font-bold uppercase text-slate-600">Sangat Senang</p></div>
+                    <div onclick="finish('Puas')" class="emoji-card p-4 bg-white rounded-3xl shadow-sm"><span class="text-4xl block mb-2">😊</span><p class="text-[10px] font-bold uppercase text-slate-600">Puas</p></div>
+                    <div onclick="finish('Biasa')" class="emoji-card p-4 bg-white rounded-3xl shadow-sm"><span class="text-4xl block mb-2">😐</span><p class="text-[10px] font-bold uppercase text-slate-600">Biasa Saja</p></div>
+                    <div onclick="finish('Kurang')" class="emoji-card p-4 bg-white rounded-3xl shadow-sm"><span class="text-4xl block mb-2">😞</span><p class="text-[10px] font-bold uppercase text-slate-600">Kurang</p></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- FLOATING ACTION BUTTONS -->
+        <div class="fab-container">
+            <!-- Mute Toggle -->
+            <button onclick="toggleMute()" id="btnMute" class="bg-white text-slate-700 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-100 hover:text-blue-600">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+            
+            <!-- Admin Settings -->
+            <button onclick="toggleEditor()" class="bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-700 hover:rotate-90">
+                <i class="fa-solid fa-gear"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- ADMIN DASHBOARD MODAL                          -->
+    <!-- ============================================== -->
+    <section id="editor-menu" class="hidden fixed inset-0 z-[250] bg-slate-100 overflow-y-auto">
+        <div class="max-w-6xl mx-auto min-h-screen bg-white shadow-2xl flex flex-col">
+            <!-- Header Dashboard -->
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-center sticky top-0 z-50 shadow-md">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-lg">P</div>
+                    <div>
+                        <h2 class="text-xl font-bold">PANDA Admin</h2>
+                        <p class="text-xs text-slate-400">Panel Kontrol & Data Pasien</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-xs font-bold transition">LOGOUT</button>
+                    <button onclick="toggleEditor()" class="w-10 h-10 bg-slate-700 hover:bg-slate-600 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b bg-white sticky top-[88px] z-40 shadow-sm overflow-x-auto">
+                <button onclick="switchTab('tab-pasien')" class="flex-1 min-w-[120px] py-4 font-bold text-xs border-b-2 border-blue-600 text-blue-600 tab-btn transition hover:bg-slate-50" id="btn-tab-pasien">
+                    <i class="fa-solid fa-users mr-2"></i> DATA PASIEN
+                </button>
+                <button onclick="switchTab('tab-materi')" class="flex-1 min-w-[120px] py-4 font-bold text-xs border-b-2 border-transparent text-slate-400 tab-btn transition hover:bg-slate-50" id="btn-tab-materi">
+                    <i class="fa-solid fa-book-medical mr-2"></i> KELOLA MATERI
+                </button>
+                <button onclick="switchTab('tab-soal')" class="flex-1 min-w-[120px] py-4 font-bold text-xs border-b-2 border-transparent text-slate-400 tab-btn transition hover:bg-slate-50" id="btn-tab-soal">
+                    <i class="fa-solid fa-file-pen mr-2"></i> BANK SOAL
+                </button>
+                <button onclick="switchTab('tab-sampah')" class="flex-1 min-w-[120px] py-4 font-bold text-xs border-b-2 border-transparent text-slate-400 tab-btn transition hover:bg-slate-50" id="btn-tab-sampah">
+                    <i class="fa-solid fa-trash-can mr-2"></i> SAMPAH (<span id="count-sampah">0</span>)
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="p-6 bg-slate-50 flex-1">
+                
+                <!-- TAB 1: DATA PASIEN -->
+                <div id="tab-pasien" class="tab-content animate-fade">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6">
+                        <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+                            <h3 class="font-bold text-slate-800 text-lg">Daftar Pasien Terdata</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="exportToCSV()" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-700 shadow-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-file-excel"></i> EXPORT CSV / LINK SPREADSHEET
+                                </button>
+                                <div class="relative group">
+                                    <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-300 flex items-center gap-2">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> HAPUS BERKALA
+                                    </button>
+                                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 hidden group-hover:block z-50">
+                                        <button onclick="hapusBerkala(1)" class="w-full text-left px-4 py-3 hover:bg-slate-50 text-xs font-bold text-slate-600 border-b">Lebih dari 24 Jam</button>
+                                        <button onclick="hapusBerkala(7)" class="w-full text-left px-4 py-3 hover:bg-slate-50 text-xs font-bold text-slate-600 border-b">Lebih dari 1 Minggu</button>
+                                        <button onclick="hapusBerkala(30)" class="w-full text-left px-4 py-3 hover:bg-slate-50 text-xs font-bold text-slate-600">Lebih dari 1 Bulan</button>
+                                    </div>
+                                </div>
+                                <button onclick="hapusManual()" class="bg-red-100 text-red-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-trash"></i> HAPUS TERPILIH
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-xl border border-slate-200">
+                            <table class="w-full text-left text-sm border-collapse">
+                                <thead class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold">
+                                    <tr>
+                                        <th class="p-4 text-center w-10"><input type="checkbox" id="check-all-pasien" onchange="toggleCheckAll(this)"></th>
+                                        <th class="p-4">Waktu</th>
+                                        <th class="p-4">Nama Pasien</th>
+                                        <th class="p-4">Ruang</th>
+                                        <th class="p-4">Materi</th>
+                                        <th class="p-4 text-center">Pre</th>
+                                        <th class="p-4 text-center">Post</th>
+                                        <th class="p-4">Kepuasan</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-pasien-body" class="bg-white divide-y divide-slate-100">
+                                    <!-- Data will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="empty-state-pasien" class="hidden text-center py-10 text-slate-400 text-sm">Belum ada data pasien.</div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: MATERI -->
+                <div id="tab-materi" class="tab-content hidden animate-fade">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-slate-700">Manajemen Materi Edukasi</h3>
+                        <button onclick="openFormMateri()" class="bg-blue-600 text-white px-6 py-3 rounded-xl text-xs font-bold shadow-lg hover:bg-blue-700 flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> TAMBAH MATERI
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="grid-materi-admin">
+                        <!-- Card View for Materials -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: SOAL -->
+                <div id="tab-soal" class="tab-content hidden animate-fade">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-700 mb-6">Daftar Soal Evaluasi per Materi</h3>
+                        <div class="space-y-4" id="list-soal-admin">
+                            <!-- List View -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: SAMPAH -->
+                <div id="tab-sampah" class="tab-content hidden animate-fade">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-slate-700">Tong Sampah (Data Terhapus)</h3>
+                            <button onclick="kosongkanSampah()" class="bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-700 shadow-sm">
+                                KOSONGKAN PERMANEN
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200">
+                            <table class="w-full text-left text-sm border-collapse">
+                                <thead class="bg-red-50 text-red-900 uppercase text-[10px] font-bold">
+                                    <tr>
+                                        <th class="p-4">Waktu Hapus</th>
+                                        <th class="p-4">Nama Pasien</th>
+                                        <th class="p-4">Materi</th>
+                                        <th class="p-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-sampah-body" class="bg-white divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FORM MODAL (MATERI) -->
+    <div id="modal-form" class="hidden fixed inset-0 z-[260] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-[2rem] p-8 shadow-2xl my-auto relative">
+            <button onclick="closeModalForm()" class="absolute top-4 right-4 bg-slate-100 p-2 rounded-full hover:bg-slate-200 transition"><i class="fa-solid fa-times text-slate-500"></i></button>
+            <h3 id="form-title" class="text-xl font-bold mb-6 text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-blue-600"></i> Tambah Materi
+            </h3>
+            
+            <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2 custom-scroll">
+                <input type="hidden" id="edit-id">
+                
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Kategori Penyakit</label>
+                    <input type="text" id="editKategori" placeholder="Contoh: DM, HT, JANTUNG" class="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 transition font-bold uppercase">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Judul Materi</label>
+                    <input type="text" id="editJudul" placeholder="Judul Materi Lengkap" class="w-full p-3 bg-slate-50 border rounded-xl outline-none focus:border-blue-500 transition font-bold">
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <label class="text-[10px] font-bold text-blue-600 block mb-2 uppercase"><i class="fa-solid fa-video mr-1"></i> Video Edukasi</label>
+                    <input type="text" id="editYt" placeholder="Link YouTube (Opsional)" class="w-full p-2 mb-2 bg-white border rounded-lg text-xs">
+                    <p class="text-[9px] text-center text-slate-400 mb-2">- ATAU -</p>
+                    <input type="file" id="editVideoFile" accept="video/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                    <label class="text-[10px] font-bold text-blue-600 block mb-2 uppercase"><i class="fa-solid fa-microphone mr-1"></i> Audio Penjelasan</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Indonesia</span>
+                            <input type="file" id="audioIndo" accept="audio/*" class="text-[9px] w-full mt-1">
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Jepang</span>
+                            <input type="file" id="audioJepang" accept="audio/*" class="text-[9px] w-full mt-1">
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Inggris</span>
+                            <input type="file" id="audioInggris" accept="audio/*" class="text-[9px] w-full mt-1">
+                        </div>
+                        <div>
+                            <span class="text-[9px] font-bold text-slate-500 uppercase">Bali</span>
+                            <input type="file" id="audioBali" accept="audio/*" class="text-[9px] w-full mt-1">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase block mb-1">Deskripsi / Teks Materi</label>
+                    <textarea id="editTeks" rows="4" placeholder="Tuliskan rangkuman materi disini..." class="w-full p-3 bg-slate-50 border rounded-xl outline-none text-sm focus:border-blue-500 transition"></textarea>
+                </div>
+            </div>
+            
+            <div class="flex gap-3 mt-6 pt-4 border-t">
+                <button onclick="closeModalForm()" class="flex-1 py-3 rounded-xl font-bold text-slate-500 text-xs hover:bg-slate-100 transition">BATAL</button>
+                <button onclick="simpanMateri()" class="flex-[2] bg-blue-600 text-white py-3 rounded-xl font-bold text-xs shadow-lg hover:bg-blue-700 transition">SIMPAN DATA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOAL MODAL -->
+    <div id="modal-soal" class="hidden fixed inset-0 z-[270] bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-2xl rounded-[2rem] p-6 shadow-2xl flex flex-col h-[85vh]">
+            <div class="flex justify-between items-center mb-4 border-b pb-4">
+                <h3 class="font-bold text-lg flex items-center gap-2 text-slate-800">
+                    <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><i class="fa-solid fa-list-check"></i></div>
+                    Edit Soal Materi
+                </h3>
+                <button onclick="document.getElementById('modal-soal').classList.add('hidden')" class="bg-slate-100 hover:bg-red-100 hover:text-red-500 w-8 h-8 rounded-full transition flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div id="list-edit-soal" class="flex-1 overflow-y-auto pr-2 custom-scroll bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <!-- Content injected by JS -->
+            </div>
+
+            <div class="mt-4 pt-4 border-t flex justify-end gap-3">
+                <button onclick="document.getElementById('modal-soal').classList.add('hidden')" 
+                    class="px-6 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition text-xs">
+                    BATAL
+                </button>
+                <button onclick="simpanSemuaSoal()" 
+                    class="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition text-xs">
+                    SIMPAN PERUBAHAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <script src="assets/script.js"></script>
+</body>
+</html>
+    <script src="assets/script.js"></script>
+    <script>
+        // Init logic for new page structure
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check if there is existing data in localStorage for materials
+            if(localStorage.getItem('panda_materi_db')) {
+                // We will let script.js handle the parsing, but if it's empty we might need to seed it
+            }
+            
+            // Render initial page 2 (categories) if we want to preview it, but normally we start at page 1
+            renderDiagnosaGrid(); // defined in script.js
+        });
+    </script>
+</body>
+</html>
