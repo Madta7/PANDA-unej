@@ -142,19 +142,19 @@
         <!-- FLOATING ACTION BUTTONS -->
         <div class="fab-container">
             <!-- Mute Toggle -->
-            <button onclick="toggleMute()" id="btnMute" class="bg-white text-slate-700 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-100 hover:text-blue-600">
+            <button onclick="toggleMute()" id="btnMute" class="bg-white text-slate-700 w-12 h-12 rounded-full shadow-lg flex items-center justify-end transition hover:bg-slate-100 hover:text-blue-600">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
             
             <!-- Admin Settings -->
-            <button onclick="toggleEditor()" class="bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-700 hover:rotate-90">
+            <button onclick="toggleEditor()" class="bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-end transition hover:bg-slate-700 hover:rotate-90">
                 <i class="fa-solid fa-gear"></i>
             </button>
         </div>
     </div>
 
     <!-- ============================================== -->
-    <!-- ADMIN DASHBOARD MODAL                          -->
+    <!--                 ADMIN DASHBOARD                -->
     <!-- ============================================== -->
     <section id="editor-menu" class="hidden fixed inset-0 z-[250] bg-slate-100 overflow-y-auto">
         <div class="max-w-6xl mx-auto min-h-screen bg-white shadow-2xl flex flex-col">
