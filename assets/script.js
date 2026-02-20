@@ -600,33 +600,31 @@ function hapusBerkala(days) {
     });
 }
 
-function exportToCSV() {
+function exportToExcel() {
     if(users.length === 0) return Swal.fire('Info', 'Tidak ada data untuk diekspor.', 'info');
     
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Waktu,Nama,Jenis Kelamin,Ruang,Materi,Skor Pre,Skor Post,Kepuasan\n";
+    // 1. Rapikan data array menjadi format yang rapi untuk kolom Excel
+    const dataRapi = users.map(u => ({
+        "Waktu Input": new Date(u.waktuMasuk).toLocaleString('id-ID'),
+        "Nama Pasien": u.nama,
+        "Jenis Kelamin": u.gender,
+        "Ruang Perawatan": u.ruang,
+        "Materi Edukasi": u.materiJudul,
+        "Skor Pre-Test": u.skorPre,
+        "Skor Post-Test": u.skorPost,
+        "Tingkat Kepuasan": u.kepuasan
+    }));
+
+    // 2. Buat lembar kerja (worksheet) dan buku kerja (workbook) Excel
+    const worksheet = XLSX.utils.json_to_sheet(dataRapi);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Pasien PANDA");
+
+    // 3. Nama file otomatis dengan tanggal hari ini
+    const namaFile = "Data_Pasien_PANDA_" + new Date().toISOString().slice(0,10) + ".xlsx";
     
-    users.forEach(u => {
-        const row = [
-            `"${new Date(u.waktuMasuk).toLocaleString('id-ID')}"`,
-            `"${u.nama}"`,
-            `"${u.gender}"`,
-            `"${u.ruang}"`,
-            `"${u.materiJudul}"`,
-            u.skorPre,
-            u.skorPost,
-            `"${u.kepuasan}"`
-        ].join(",");
-        csvContent += row + "\n";
-    });
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "data_pasien_panda_" + new Date().toISOString().slice(0,10) + ".csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // 4. Proses unduh
+    XLSX.writeFile(workbook, namaFile);
 }
 
 // --- TAB SAMPAH ---
