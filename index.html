@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <?!= include('style'); ?>
 </head>
 <body class="font-sans text-slate-800 bg-slate-100 min-h-screen">
 
@@ -145,12 +144,12 @@
         <!-- FLOATING ACTION BUTTONS -->
         <div class="fab-container">
             <!-- Mute Toggle -->
-            <button onclick="toggleMute()" id="btnMute" class="bg-white text-slate-700 w-12 h-12 rounded-full shadow-lg flex items-center justify-end transition hover:bg-slate-100 hover:text-blue-600">
+            <button onclick="toggleMute()" id="btnMute" class="bg-white text-slate-700 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-100 hover:text-blue-600">
                 <i class="fa-solid fa-volume-high"></i>
             </button>
             
             <!-- Admin Settings -->
-            <button onclick="toggleEditor()" class="bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-end transition hover:bg-slate-700 hover:rotate-90">
+            <button onclick="toggleEditor()" class="bg-slate-800 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition hover:bg-slate-700 hover:rotate-90">
                 <i class="fa-solid fa-gear"></i>
             </button>
         </div>
