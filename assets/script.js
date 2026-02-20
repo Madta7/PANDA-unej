@@ -74,35 +74,45 @@ let currentEditSoal = { cat: '', id: '' };
 let isMuted = false;
 
    
-    // ==========================================
+// ==========================================
 // --- FUNGSI NAVIGASI & INIT (VERSI FIREBASE) ---
 // ==========================================
 
-// Init App: Ambil data dari server sebelum aplikasi dirender
+// Init App: Ambil dan Pantau data dari server secara REAL-TIME
 document.addEventListener('DOMContentLoaded', () => {
-    // Ambil semua data dari Firebase
-    database.ref('/').once('value').then((snapshot) => {
+    
+    // Menggunakan .on() bukan .once()
+    database.ref('/').on('value', (snapshot) => {
         const data = snapshot.val();
         
         if (data) {
-            // Jika ada data di server, timpa data lokal dengan data dari server
+            // Selalu perbarui data lokal dengan data paling fresh dari server
             db = data.materi || defaultDB;
-            users = data.users || [];
-            trash = data.trash || [];
+            
+            // Konversi aman untuk memastikan formatnya tetap Array (karena Firebase kadang mengubah array jadi object)
+            users = data.users ? (Array.isArray(data.users) ? data.users : Object.values(data.users)) : [];
+            trash = data.trash ? (Array.isArray(data.trash) ? data.trash : Object.values(data.trash)) : [];
         } else {
-            // Jika database server masih kosong sama sekali, simpan data default
+            // Jika kosong, simpan data bawaan
             saveDB();
         }
 
-        // Setelah data berhasil ditarik, baru render tampilan
+        // Render ulang tampilan depan
         renderDiagnosaGrid();
-    }).catch((error) => {
-        console.error("Gagal mengambil data Firebase:", error);
-        Swal.fire('Waduh', 'Gagal terhubung ke database, pastikan internet lancar ya!', 'error');
         
-        // Fallback: Tetap render pakai data default kalau internet putus
-        renderDiagnosaGrid();
+        // FITUR SULAP: Jika panel admin sedang dibuka, otomatis update tabel tanpa perlu refresh halaman!
+        const editor = document.getElementById('editor-menu');
+        if(editor && !editor.classList.contains('hidden')) {
+            renderTablePasien();
+            renderGridMateriAdmin();
+            renderListSoalAdmin();
+            renderTableSampah();
+        }
+
+    }, (error) => {
+        console.error("Gagal sinkronisasi data:", error);
     });
+    
 });
 
 // Fungsi Save sekarang mengirim data ke Firebase
