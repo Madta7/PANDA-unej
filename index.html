@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
 </head>
@@ -203,8 +206,8 @@
                         <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
                             <h3 class="font-bold text-slate-800 text-lg">Daftar Pasien Terdata</h3>
                             <div class="flex flex-wrap gap-2">
-                                <button onclick="exportToCSV()" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-700 shadow-sm flex items-center gap-2">
-                                    <i class="fa-solid fa-file-excel"></i> EXPORT CSV / LINK SPREADSHEET
+                                <button onclick="exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-700 shadow-sm flex items-center gap-2">
+                                    <i class="fa-solid fa-file-excel"></i> EXPORT KE EXCEL
                                 </button>
                                 <div class="relative group">
                                     <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-300 flex items-center gap-2">
