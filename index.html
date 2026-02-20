@@ -8,8 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-    <script src="assets/script.js"></script>
 </head>
 <body class="font-sans text-slate-800 bg-slate-100 min-h-screen">
 
@@ -203,9 +201,9 @@
                         <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
                             <h3 class="font-bold text-slate-800 text-lg">Daftar Pasien Terdata</h3>
                             <div class="flex flex-wrap gap-2">
-                                <button onclick="exportToExcel()" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-700 shadow-sm flex items-center gap-2">
-                                    <i class="fa-solid fa-file-excel"></i> EXPORT KE EXCEL
-                                </button>
+                                <a href="https://docs.google.com/spreadsheets/d/1jKGZygiCU0CuRJox5aMNIyPcYPVsw7hqvzLnw5xaNAw/edit?usp=sharing" target="_blank" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-700 shadow-sm flex items-center gap-2 w-fit">
+                                    <i class="fa-solid fa-table"></i> BUKA SPREADSHEET
+                                </a>
                                 <div class="relative group">
                                     <button class="bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold hover:bg-slate-300 flex items-center gap-2">
                                         <i class="fa-solid fa-clock-rotate-left"></i> HAPUS BERKALA
