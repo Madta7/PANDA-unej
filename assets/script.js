@@ -64,7 +64,7 @@ let trash = JSON.parse(localStorage.getItem(STORAGE_KEYS.TRASH)) || [];
 
 // Session User Aktif
 let currentUser = { 
-    id: null, nama: '', ruang: '', gender: '', 
+    id: null, nama: '', ruang: '', jenisKelamin: '', 
     materiId: '', materiJudul: '', 
     skorPre: 0, skorPost: 0, 
     waktuMasuk: null, kepuasan: '-' 
@@ -161,16 +161,16 @@ function renderDiagnosaGrid() {
 
 function startApp() {
     const nama = document.getElementById('inputNama').value;
-    const gender = document.getElementById('inputGender').value;
+    const jeniskelamin = document.getElementById('inputjenisKelamin').value;
     const ruang = document.getElementById('inputRuang').value;
 
-    if(!nama || !gender || !ruang) return Swal.fire('Waduh', 'Mohon lengkapi semua data diri ya!', 'warning');
+    if(!nama || !jeniskelamin || !ruang) return Swal.fire('Waduh', 'Mohon lengkapi semua data diri ya!', 'warning');
 
     // Buat Session User Baru
     currentUser = {
         id: Date.now(),
         nama: nama,
-        gender: gender,
+        jenisKelamin: jeniskelamin,
         ruang: ruang,
         waktuMasuk: new Date().toISOString(),
         materiJudul: '-',
@@ -486,7 +486,7 @@ function renderTablePasien() {
             <tr class="hover:bg-slate-50 transition border-b border-slate-50">
                 <td class="p-4 text-center"><input type="checkbox" class="check-pasien" value="${u.id}"></td>
                 <td class="p-4 text-xs font-bold text-slate-500">${time}</td>
-                <td class="p-4 font-bold text-slate-700">${u.nama}<br><span class="text-[9px] text-slate-400 font-normal uppercase">${u.gender}</span></td>
+                <td class="p-4 font-bold text-slate-700">${u.nama}<br><span class="text-[9px] text-slate-400 font-normal uppercase">${u.jenisKelamin}</span></td>
                 <td class="p-4 text-xs font-bold text-blue-600 bg-blue-50 rounded-lg w-fit h-fit">${u.ruang}</td>
                 <td class="p-4 text-xs text-slate-600 max-w-[150px] truncate">${u.materiJudul}</td>
                 <td class="p-4 text-center font-bold text-slate-700">${u.skorPre}</td>
@@ -600,33 +600,56 @@ function hapusBerkala(days) {
     });
 }
 
-function exportToExcel() {
-    if(users.length === 0) return Swal.fire('Info', 'Tidak ada data untuk diekspor.', 'info');
+function finish(val) {
+    currentUser.kepuasan = val;
+    updateCurrentUser(); // Simpan ke Firebase / LocalStorage
     
-    // 1. Rapikan data array menjadi format yang rapi untuk kolom Excel
-    const dataRapi = users.map(u => ({
-        "Waktu Input": new Date(u.waktuMasuk).toLocaleString('id-ID'),
-        "Nama Pasien": u.nama,
-        "Jenis Kelamin": u.gender,
-        "Ruang Perawatan": u.ruang,
-        "Materi Edukasi": u.materiJudul,
-        "Skor Pre-Test": u.skorPre,
-        "Skor Post-Test": u.skorPost,
-        "Tingkat Kepuasan": u.kepuasan
-    }));
+    // 1. Siapkan data untuk dikirim ke Google Sheet
+    const dataGoogleSheet = {
+        waktu: new Date().toLocaleString('id-ID'),
+        nama: currentUser.nama,
+        jenisKelamin: currentUser.jenisKelamin,
+        ruang: currentUser.ruang,
+        materi: currentUser.materiJudul,
+        skorPre: currentUser.skorPre,
+        skorPost: currentUser.skorPost,
+        kepuasan: val
+    };
 
-    // 2. Buat lembar kerja (worksheet) dan buku kerja (workbook) Excel
-    const worksheet = XLSX.utils.json_to_sheet(dataRapi);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Pasien PANDA");
+    // 2. GANTI DENGAN URL APPS SCRIPT MILIKMU
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxu-bHGbsgvTlm0wHfWoER8rPNkjhuIuK87xNSHbOSgtx03Ub9DhSCeC-Uzc0C5tYkE/exec';
 
-    // 3. Nama file otomatis dengan tanggal hari ini
-    const namaFile = "Data_Pasien_PANDA_" + new Date().toISOString().slice(0,10) + ".xlsx";
-    
-    // 4. Proses unduh
-    XLSX.writeFile(workbook, namaFile);
+    // 3. Tampilkan loading sebelum sukses
+    Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Mohon tunggu sebentar',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading()
+        }
+    });
+
+    // 4. Kirim data ke Google Sheet
+    fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(dataGoogleSheet),
+        mode: 'no-cors', // Penting agar tidak diblokir browser
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(() => {
+        // Jika sukses kirim, tampilkan ucapan terima kasih
+        Swal.fire('Terima Kasih!', 'Semoga lekas sembuh dan sehat selalu!', 'success').then(() => {
+            location.reload();
+        });
+    })
+    .catch(error => {
+        console.error('Error Google Sheet!', error.message);
+        // Tetap tutup aplikasi meski gagal kirim ke Sheet agar pasien tidak bingung
+        Swal.fire('Terima Kasih!', 'Semoga lekas sembuh!', 'success').then(() => {
+            location.reload();
+        });
+    });
 }
-
 // --- TAB SAMPAH ---
 function updateCountSampah() {
     document.getElementById('count-sampah').innerText = trash.length;
